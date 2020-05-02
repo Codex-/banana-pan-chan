@@ -21,11 +21,11 @@
   },
   "homepage": "https://github.com/Codex-/banana-pan-chan#readme",
   "dependencies": {
-    "tmi.js": "^1.5.0"
+    "tmi.js": "^1.5.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/node": "^13.13.4",
-    "@types/tmi.js": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
