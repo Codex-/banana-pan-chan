@@ -1,0 +1,36 @@
+{
+  "name": "banana-pan-chan",
+  "version": "1.0.0",
+  "description": "Twitch Bot",
+  "main": "build/banana-pan-chan.js",
+  "scripts": {
+    "build": "tsc",
+    "format:check": "prettier --check \"./src/**/*.{json|ts}\"",
+    "format:write": "npm run format:check -- --write",
+    "lint": "eslint . --ext .ts",
+    "test": "npm run format:check && npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Codex-/banana-pan-chan.git"
+  },
+  "author": "Alex Miller",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Codex-/banana-pan-chan/issues"
+  },
+  "homepage": "https://github.com/Codex-/banana-pan-chan#readme",
+  "dependencies": {
+    "tmi.js": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.4",
+    "@types/tmi.js": "^1.4.0",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "eslint": "^6.8.0",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
+  }
+}
