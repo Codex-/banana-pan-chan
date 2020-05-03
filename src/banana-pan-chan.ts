@@ -62,7 +62,7 @@ class BananaPanChan {
           return;
         }
         const userId = userstate["user-id"];
-        const username = `${userstate.username}`; // coerce undefined to empty string.
+        const username = userstate.username || '';
 
         if (message[0] === this.commandChar) {
           logger.verbose(
@@ -73,7 +73,7 @@ class BananaPanChan {
             .substr(this.commandChar.length)
             .split(/\s+/g)[0];
 
-          executeCommand(command, username, command, message);
+          executeCommand(channel, username, command, message);
         } else {
           executeMatchers(username, message);
         }
