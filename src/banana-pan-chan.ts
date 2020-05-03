@@ -56,9 +56,9 @@ class BananaPanChan {
         channel: string,
         userstate: UserState,
         message: string,
-        self: boolean
+        bot: boolean
       ) => {
-        if (message.length === 0 || self) {
+        if (message.length === 0 || bot) {
           return;
         }
         const userId = userstate["user-id"];
