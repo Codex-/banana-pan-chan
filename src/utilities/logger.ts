@@ -30,11 +30,11 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const TMI_PHASE = "tmi client";
+const TMI_LABEL = "tmi";
 export const tmiLogger = {
-  info: (msg: string) => logger.info(msg, { label: TMI_PHASE }),
-  warn: (msg: string) => logger.warn(msg, { label: TMI_PHASE }),
-  error: (msg: string) => logger.error(msg, { label: TMI_PHASE }),
+  info: (msg: string) => logger.info(msg, { label: TMI_LABEL }),
+  warn: (msg: string) => logger.warn(msg, { label: TMI_LABEL }),
+  error: (msg: string) => logger.error(msg, { label: TMI_LABEL }),
 };
 
 export default logger;

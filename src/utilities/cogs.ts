@@ -9,6 +9,10 @@ const COGS_DIR = Path.join(__dirname, "..", "cogs");
  * @param type
  */
 export function importCogs(type: string): void {
+  if (!fs.existsSync(COGS_DIR)) {
+    return;
+  }
+
   const cogs = fs
     .readdirSync(COGS_DIR)
     .map((cogDir) =>

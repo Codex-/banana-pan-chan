@@ -1,8 +1,14 @@
 import { EventEmitter } from "events";
 
 export interface Client extends EventEmitter {
+  connect: () => Promise<ConnectionInfo>,
   say: (channel: string, message: string) => Promise<string[]>;
 }
+
+/**
+ * Represents the URL and Port returned upon a successful connection.
+ */
+export type ConnectionInfo = [string, number];
 
 export interface UserState {
   "badges-raw"?: string;

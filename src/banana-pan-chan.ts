@@ -2,11 +2,11 @@ const tmi = require("tmi.js");
 
 import CONFIG from "./config";
 import logger, { tmiLogger } from "./utilities/logger";
-import { Client, UserState } from "./types/tmi";
+import { Client, UserState, ConnectionInfo } from "./types/tmi";
 import { executeCommand } from "./commands";
-import { executeMatchers } from './matchers';
+import { executeMatchers } from "./matchers";
 
-const PHASE = "BananaPan";
+const LABEL = "BananaPan";
 
 class BananaPanChan {
   private client: Client;
@@ -15,6 +15,10 @@ class BananaPanChan {
   constructor() {
     this.client = this.createClient();
     this.bindMessageHandler();
+  }
+
+  public connect(): Promise<ConnectionInfo> {
+    return this.client.connect();
   }
 
   public async say(
@@ -29,13 +33,13 @@ class BananaPanChan {
         `.say Ch: ${channel} Msg: ${message} ${
           username ? `User: ${username}` : ""
         }`,
-        { label: PHASE }
+        { label: LABEL }
       );
     }
   }
 
   private createClient(): Client {
-    return new tmi.Client({
+    return new tmi.client({
       clientId: "BananaPan",
       connection: {
         secure: true,
@@ -62,12 +66,12 @@ class BananaPanChan {
           return;
         }
         const userId = userstate["user-id"];
-        const username = userstate.username || '';
+        const username = userstate.username || "";
 
         if (message[0] === this.commandChar) {
           logger.verbose(
             `Ch: ${channel} User: ${username}, ID: ${userId}, Command: ${message}`,
-            { label: PHASE }
+            { label: LABEL }
           );
           const command = message
             .substr(this.commandChar.length)
@@ -83,3 +87,7 @@ class BananaPanChan {
 }
 
 export const client = new BananaPanChan();
+
+(async () => {
+  await client.connect();
+})();

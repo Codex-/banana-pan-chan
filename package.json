@@ -5,7 +5,7 @@
   "main": "build/banana-pan-chan.js",
   "scripts": {
     "build": "tsc",
-    "format:check": "prettier --check \"./src/**/*.{json|ts}\"",
+    "format:check": "prettier --check \"./src/**/*.{json,ts}\"",
     "format:write": "npm run format:check -- --write",
     "lint": "eslint . --ext .ts",
     "test": "npm run format:check && npm run lint"
@@ -21,16 +21,17 @@
   },
   "homepage": "https://github.com/Codex-/banana-pan-chan#readme",
   "dependencies": {
+    "better-sqlite3": "^7.0.1",
     "tmi.js": "^1.5.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@types/node": "^13.13.4",
-    "@typescript-eslint/eslint-plugin": "^2.30.0",
-    "@typescript-eslint/parser": "^2.30.0",
-    "eslint": "^6.8.0",
+    "@types/node": "^14.0.6",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "eslint": "^7.1.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.3"
   }
 }

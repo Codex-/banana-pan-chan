@@ -6,27 +6,27 @@ interface BananaPanChanConfig {
 }
 
 interface LoggerConfig {
-    /**
-     * @example "info"
-     */
-    Level: string;
+  /**
+   * @example "info"
+   */
+  Level: string;
 }
 
 interface TmiConfig {
-    /**
-     * @example "!"
-     */
-    CommandCharacter: string;
+  /**
+   * @example "!"
+   */
+  CommandCharacter: string;
 
-    /**
-     * @example "oauth:my-bot-token"
-     */
-    Token: string;
+  /**
+   * @example "oauth:my-bot-token"
+   */
+  Token: string;
 
-    /**
-     * @example "my-bot-name"
-     */
-    Username: string;
+  /**
+   * @example "my-bot-name"
+   */
+  Username: string;
 }
 
 export default config as BananaPanChanConfig;
