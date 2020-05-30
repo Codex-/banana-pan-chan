@@ -14,6 +14,11 @@ interface LoggerConfig {
 
 interface TmiConfig {
   /**
+   * @example "YourOwnChannel"
+   */
+  Channel: string;
+
+  /**
    * @example "!"
    */
   CommandCharacter: string;

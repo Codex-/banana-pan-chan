@@ -17,20 +17,16 @@ class BananaPanChan {
     this.bindMessageHandler();
   }
 
-  public connect(): Promise<ConnectionInfo> {
-    return this.client.connect();
+  public async connect(): Promise<ConnectionInfo> {
+    return await this.client.connect();
   }
 
-  public async say(
-    channel: string,
-    message: string,
-    username?: string
-  ): Promise<void> {
+  public async say(message: string, username?: string): Promise<void> {
     try {
-      await this.client.say(channel, message);
+      await this.client.say(CONFIG.Tmi.Channel, message);
     } catch (error) {
       logger.error(
-        `.say Ch: ${channel} Msg: ${message} ${
+        `.say Ch: ${CONFIG.Tmi.Channel} Msg: ${message} ${
           username ? `User: ${username}` : ""
         }`,
         { label: LABEL }
@@ -41,6 +37,7 @@ class BananaPanChan {
   private createClient(): Client {
     return new tmi.client({
       clientId: "BananaPan",
+      channels: [CONFIG.Tmi.Channel],
       connection: {
         secure: true,
         reconnect: true,
