@@ -3,8 +3,9 @@ const tmi = require("tmi.js");
 import CONFIG from "./config";
 import logger, { tmiLogger } from "./utilities/logger";
 import { Client, UserState, ConnectionInfo } from "./types/tmi";
-import { executeCommand } from "./commands";
+import { executeCommand, loadFromDb } from "./commands";
 import { executeMatchers } from "./matchers";
+import { checkTables } from "./db/database";
 
 const LABEL = "BananaPan";
 
@@ -13,6 +14,9 @@ class BananaPanChan {
   private commandChar = CONFIG.Tmi.CommandCharacter;
 
   constructor() {
+    this.initialiseDb();
+    this.loadDbData();
+
     this.client = this.createClient();
     this.bindMessageHandler();
   }
@@ -80,6 +84,18 @@ class BananaPanChan {
         }
       }
     );
+  }
+
+  private initialiseDb() {
+    try {
+      checkTables();
+    } catch (error) {
+      logger.error(LABEL, error.message);
+    }
+  }
+
+  private loadDbData() {
+    loadFromDb();
   }
 }
 

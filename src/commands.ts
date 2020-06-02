@@ -1,13 +1,10 @@
-// import { importCogs } from "./utilities/cogs";
 import logger from "./utilities/logger";
 import { client } from "./banana-pan-chan";
 import { importCogs } from "./utilities/cogs";
+import { db } from "./db/database";
+import { getAllCommands } from "./db/commands";
 
-type Command = (
-  channel: string,
-  user: string,
-  message: string
-) => Promise<void>;
+type Command = (user: string, message: string) => Promise<void>;
 type CommandStore = {
   [id: string]: Command;
 };
@@ -52,13 +49,9 @@ export function registerCmd(...handles: string[]): MethodDecorator {
        *
        * @param message
        */
-      const wrappedCmd = async (
-        channel: string,
-        username: string,
-        message: string
-      ) => {
+      const wrappedCmd = async (username: string, message: string) => {
         try {
-          await target[propertyKey](channel, username, message);
+          await target[propertyKey](username, message);
         } catch (error) {
           error.label = `${LABEL}.${newHandle}`;
           throw error;
@@ -70,6 +63,16 @@ export function registerCmd(...handles: string[]): MethodDecorator {
   };
 }
 
+export function loadFromDb(): void {
+  const cmds = getAllCommands();
+  for (const cmd of cmds) {
+    COMMAND_TABLE[cmd.command] = () => client.say(cmd.body);
+  }
+  logger.info(LABEL, `Loaded ${cmds.length} commands from the database.`);
+
+  console.log(COMMAND_TABLE);
+}
+
 export async function executeCommand(
   channel: string,
   username: string,
@@ -78,12 +81,12 @@ export async function executeCommand(
 ): Promise<void> {
   try {
     if (COMMAND_TABLE[command]) {
-      await COMMAND_TABLE[command](channel, username, message);
+      await COMMAND_TABLE[command](username, message);
       return;
     }
     logger.verbose(LABEL, `Command not found: ${command}`);
   } catch (error) {
-    client.say(channel, "Command failed :pensive:");
+    client.say(channel, "Command failed 😔");
     const cmdLabel = error.LABEL || LABEL;
     logger.error(cmdLabel, `${error.message}`);
     logger.debug(cmdLabel, `Stacktrace:\n${error.stack}`);
