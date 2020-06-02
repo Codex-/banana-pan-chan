@@ -26,10 +26,10 @@ class BananaPanChan {
       await this.client.say(CONFIG.Tmi.Channel, message);
     } catch (error) {
       logger.error(
+        LABEL,
         `.say Ch: ${CONFIG.Tmi.Channel} Msg: ${message} ${
           username ? `User: ${username}` : ""
-        }`,
-        { label: LABEL }
+        }`
       );
     }
   }
@@ -67,8 +67,8 @@ class BananaPanChan {
 
         if (message[0] === this.commandChar) {
           logger.verbose(
-            `Ch: ${channel} User: ${username}, ID: ${userId}, Command: ${message}`,
-            { label: LABEL }
+            LABEL,
+            `Ch: ${channel} User: ${username}, ID: ${userId}, Command: ${message}`
           );
           const command = message
             .substr(this.commandChar.length)

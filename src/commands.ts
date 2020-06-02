@@ -12,7 +12,7 @@ type CommandStore = {
   [id: string]: Command;
 };
 
-const PHASE = "commands";
+const LABEL = "commands";
 
 const COMMAND_TABLE: CommandStore = {};
 
@@ -60,7 +60,7 @@ export function registerCmd(...handles: string[]): MethodDecorator {
         try {
           await target[propertyKey](channel, username, message);
         } catch (error) {
-          error.phase = `${PHASE}\\${newHandle}`;
+          error.label = `${LABEL}.${newHandle}`;
           throw error;
         }
       };
@@ -81,12 +81,12 @@ export async function executeCommand(
       await COMMAND_TABLE[command](channel, username, message);
       return;
     }
-    logger.verbose(`Command not found: ${command}`, { label: PHASE });
+    logger.verbose(LABEL, `Command not found: ${command}`);
   } catch (error) {
     client.say(channel, "Command failed :pensive:");
-    const commandPhase = error.phase || PHASE;
-    logger.error(`${error.message}`, { label: commandPhase });
-    logger.debug(`Stacktrace:\n${error.stack}`, { label: commandPhase });
+    const cmdLabel = error.LABEL || LABEL;
+    logger.error(cmdLabel, `${error.message}`);
+    logger.debug(cmdLabel, `Stacktrace:\n${error.stack}`);
   }
 }
 

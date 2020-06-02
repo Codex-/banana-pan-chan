@@ -7,7 +7,7 @@ interface MatcherEntry {
   method: MatcherMethod;
 }
 
-const PHASE = "matchers";
+const LABEL = "matchers";
 
 const MATCHER_ARRAY: MatcherEntry[] = [];
 
@@ -38,7 +38,7 @@ export function registerMatcher(regex: RegExp): MethodDecorator {
       try {
         await target[propertyKey](username, message);
       } catch (error) {
-        error.phase = `${PHASE}\\${regex}`;
+        error.label = `${LABEL}.${regex}`;
         throw error;
       }
     };
@@ -64,9 +64,9 @@ export async function executeMatchers(
         try {
           await matcherEntry.method(username, message);
         } catch (error) {
-          const matcherPhase = error.phase || PHASE;
-          logger.error(`${error.message}`, { label: matcherPhase });
-          logger.debug(`Stacktrace:\n${error.stack}`, { label: matcherPhase });
+          const matcherLabel = error.label || LABEL;
+          logger.error(matcherLabel, `${error.message}`);
+          logger.debug(matcherLabel, `Stacktrace:\n${error.stack}`);
         }
       })();
     }
