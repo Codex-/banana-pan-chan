@@ -1,6 +1,9 @@
 # Config
 config.json
 
+# Files
+*.db
+
 # Folders
 build
 node_modules
