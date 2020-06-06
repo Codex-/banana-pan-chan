@@ -1,5 +1,9 @@
 import { client } from "./banana-pan-chan";
-import { getAllCommands } from "./db/commands";
+import {
+  getAllCommands,
+  setAddDelegate,
+  setDeleteDelegate,
+} from "./db/commands";
 import { importCogs } from "./utilities/cogs";
 import logger from "./utilities/logger";
 
@@ -57,6 +61,20 @@ export function registerCmd(...handles: string[]): MethodDecorator {
     }
   };
 }
+
+function addCmd(cmd: string, body: string): void {
+  COMMAND_TABLE[cmd] = () => client.say(body);
+  logger.verbose(LABEL, `Added ${cmd} to command store.`);
+}
+
+setAddDelegate(addCmd);
+
+function deleteCmd(cmd: string): void {
+  delete COMMAND_TABLE[cmd];
+  logger.verbose(LABEL, `Deleted ${cmd} from command store.`);
+}
+
+setDeleteDelegate(deleteCmd);
 
 export function loadFromDb(): void {
   const cmds = getAllCommands();

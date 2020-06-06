@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 
 export interface Client extends EventEmitter {
-  connect: () => Promise<ConnectionInfo>,
+  connect: () => Promise<ConnectionInfo>;
   say: (channel: string, message: string) => Promise<string[]>;
 }
 
