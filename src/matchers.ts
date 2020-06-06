@@ -17,11 +17,7 @@ const MATCHER_ARRAY: MatcherEntry[] = [];
  * @param regex the regular expression to test messages with.
  */
 export function registerMatcher(regex: RegExp): MethodDecorator {
-  return (
-    target: { [index: string]: any },
-    propertyKey: string | symbol,
-    _: PropertyDescriptor
-  ) => {
+  return (target: { [index: string]: any }, propertyKey: string | symbol) => {
     if (typeof propertyKey === "symbol") {
       return;
     }
@@ -56,19 +52,13 @@ export async function executeMatchers(
 ): Promise<void> {
   for (const matcherEntry of MATCHER_ARRAY) {
     if (matcherEntry.regex.test(message)) {
-      /**
-       * Wrap and execute the matcher method call to handle promise rejections
-       * whilst not blocking iteration.
-       */
-      (async () => {
-        try {
-          await matcherEntry.method(username, message);
-        } catch (error) {
-          const matcherLabel = error.label || LABEL;
-          logger.error(matcherLabel, `${error.message}`);
-          logger.debug(matcherLabel, `Stacktrace:\n${error.stack}`);
-        }
-      })();
+      try {
+        await matcherEntry.method(username, message);
+      } catch (error) {
+        const matcherLabel = error.label || LABEL;
+        logger.error(matcherLabel, `${error.message}`);
+        logger.debug(matcherLabel, `Stacktrace:\n${error.stack}`);
+      }
     }
   }
 }

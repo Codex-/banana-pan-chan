@@ -83,9 +83,9 @@ const logger = new Logger();
 
 const TMI_LABEL = "tmi";
 export const tmiLogger = {
-  info: (msg: string) => logger.info(TMI_LABEL, msg),
-  warn: (msg: string) => logger.warn(TMI_LABEL, msg),
-  error: (msg: string) => logger.error(TMI_LABEL, msg),
+  info: (msg: string): void => logger.info(TMI_LABEL, msg),
+  warn: (msg: string): void => logger.warn(TMI_LABEL, msg),
+  error: (msg: string): void => logger.error(TMI_LABEL, msg),
 };
 
 export default logger;

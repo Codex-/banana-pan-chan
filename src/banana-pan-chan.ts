@@ -1,3 +1,4 @@
+// tslint:disable-next-line: no-var-requires
 const tmi = require("tmi.js");
 
 import CONFIG from "./config";
@@ -78,8 +79,10 @@ class BananaPanChan {
             .substr(this.commandChar.length)
             .split(/\s+/g)[0];
 
+          // tslint:disable-next-line: no-floating-promises
           executeCommand(channel, username, command, message);
         } else {
+          // tslint:disable-next-line: no-floating-promises
           executeMatchers(username, message);
         }
       }
@@ -101,6 +104,7 @@ class BananaPanChan {
 
 export const client = new BananaPanChan();
 
+// tslint:disable-next-line: no-floating-promises
 (async () => {
   await client.connect();
 })();

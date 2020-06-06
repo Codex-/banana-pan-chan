@@ -1,13 +1,12 @@
-import logger from "./utilities/logger";
 import { client } from "./banana-pan-chan";
-import { importCogs } from "./utilities/cogs";
-import { db } from "./db/database";
 import { getAllCommands } from "./db/commands";
+import { importCogs } from "./utilities/cogs";
+import logger from "./utilities/logger";
 
 type Command = (user: string, message: string) => Promise<void>;
-type CommandStore = {
+interface CommandStore {
   [id: string]: Command;
-};
+}
 
 const LABEL = "commands";
 
@@ -30,11 +29,7 @@ export function getArgs(msg: string): string[] {
  * @param handles a list of commands to be handled by the decorated method.
  */
 export function registerCmd(...handles: string[]): MethodDecorator {
-  return (
-    target: { [index: string]: any },
-    propertyKey: string | symbol,
-    _: PropertyDescriptor
-  ) => {
+  return (target: { [index: string]: any }, propertyKey: string | symbol) => {
     if (typeof propertyKey === "symbol") {
       return;
     }
@@ -70,6 +65,7 @@ export function loadFromDb(): void {
   }
   logger.info(LABEL, `Loaded ${cmds.length} commands from the database.`);
 
+  // tslint:disable-next-line: no-console
   console.log(COMMAND_TABLE);
 }
 
@@ -86,10 +82,10 @@ export async function executeCommand(
     }
     logger.verbose(LABEL, `Command not found: ${command}`);
   } catch (error) {
-    client.say(channel, "Command failed 😔");
     const cmdLabel = error.LABEL || LABEL;
     logger.error(cmdLabel, `${error.message}`);
     logger.debug(cmdLabel, `Stacktrace:\n${error.stack}`);
+    await client.say(channel, "Command failed 😔");
   }
 }
 

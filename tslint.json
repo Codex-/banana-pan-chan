@@ -1,0 +1,65 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
+  "rules": {
+    "array-type": [
+      true,
+      "array-simple"
+    ],
+    "arrow-return-shorthand": true,
+    "await-promise": [
+      true,
+      "PromisedAssertion"
+    ],
+    "binary-expression-operand-order": true,
+    "curly": true,
+    "interface-name": false,
+    "interface-over-type-literal": true,
+    "max-classes-per-file": false,
+    "max-line-length": false,
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "static-field",
+          "instance-field",
+          "constructor",
+          "instance-method",
+          "static-method"
+        ]
+      }
+    ],
+    "no-console": true,
+    "no-duplicate-imports": true,
+    "no-floating-promises": true,
+    "no-for-in-array": true,
+    "no-inferred-empty-object-type": true,
+    "no-null-keyword": true,
+    "no-object-literal-type-assertion": true,
+    "no-reference": false,
+    "no-sparse-arrays": true,
+    "no-this-assignment": true,
+    "no-unbound-method": true,
+    "object-literal-shorthand": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": true,
+    "prefer-for-of": true,
+    "prefer-object-spread": true,
+    "prefer-template": true,
+    "triple-equals": true,
+    "promise-function-async": true,
+    "strict-type-predicates": true,
+    "switch-default": true,
+    "variable-name": {
+      "options": [
+        "allow-leading-underscore",
+        "allow-pascal-case",
+        "ban-keywords",
+        "check-format"
+      ]
+    }
+  }
+}
