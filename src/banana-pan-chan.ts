@@ -80,7 +80,7 @@ class BananaPanChan {
             .split(/\s+/g)[0];
 
           // tslint:disable-next-line: no-floating-promises
-          executeCommand(channel, username, command, message);
+          executeCommand(username, command, message);
         } else {
           // tslint:disable-next-line: no-floating-promises
           executeMatchers(username, message);

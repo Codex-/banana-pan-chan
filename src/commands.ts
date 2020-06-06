@@ -70,7 +70,6 @@ export function loadFromDb(): void {
 }
 
 export async function executeCommand(
-  channel: string,
   username: string,
   command: string,
   message: string
@@ -85,7 +84,7 @@ export async function executeCommand(
     const cmdLabel = error.LABEL || LABEL;
     logger.error(cmdLabel, `${error.message}`);
     logger.debug(cmdLabel, `Stacktrace:\n${error.stack}`);
-    await client.say(channel, "Command failed 😔");
+    await client.say(`@${username} Command failed 😔`);
   }
 }
 
