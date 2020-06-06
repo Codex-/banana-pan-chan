@@ -1,4 +1,4 @@
-import { db } from "./database";
+import { db } from "./provider";
 
 const COLUMNS = "command, body";
 const TABLE = "Commands";

@@ -1,12 +1,12 @@
 // tslint:disable-next-line: no-var-requires
 const tmi = require("tmi.js");
 
-import CONFIG from "./config";
-import logger, { tmiLogger } from "./utilities/logger";
-import { Client, UserState, ConnectionInfo } from "./types/tmi";
 import { executeCommand, loadFromDb } from "./commands";
+import CONFIG from "./config";
+import * as db from "./db/provider";
 import { executeMatchers } from "./matchers";
-import { checkTables } from "./db/database";
+import { Client, ConnectionInfo, UserState } from "./types/tmi";
+import logger, { tmiLogger } from "./utilities/logger";
 
 const LABEL = "BananaPan";
 
@@ -15,7 +15,7 @@ class BananaPanChan {
   private commandChar = CONFIG.Tmi.CommandCharacter;
 
   constructor() {
-    this.initialiseDb();
+    db.validateTables();
     this.loadDbData();
 
     this.client = this.createClient();
@@ -23,7 +23,7 @@ class BananaPanChan {
   }
 
   public async connect(): Promise<ConnectionInfo> {
-    return await this.client.connect();
+    return this.client.connect();
   }
 
   public async say(message: string, username?: string): Promise<void> {
@@ -87,14 +87,6 @@ class BananaPanChan {
         }
       }
     );
-  }
-
-  private initialiseDb() {
-    try {
-      checkTables();
-    } catch (error) {
-      logger.error(LABEL, error.message);
-    }
   }
 
   private loadDbData() {
