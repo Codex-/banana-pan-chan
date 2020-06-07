@@ -16,6 +16,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Create config
+        uses: finnp/create-file-action@1.0.0
+        env:
+          FILE_NAME: "src/config.json"
+          FILE_DATA: "{}\n"
       - name: Install
         run: |
           npm i
