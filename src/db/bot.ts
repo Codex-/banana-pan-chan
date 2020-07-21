@@ -6,7 +6,7 @@ const LABEL = "db-bot";
 const TABLE = "Bot";
 
 export function getDbSchemaVersion(): number {
-  const sql = `SELECT schema_version FROM Bot`;
+  const sql = `SELECT schema_version FROM ${TABLE}`;
   const version: number = db.prepare(sql).get()[0];
 
   return version;
