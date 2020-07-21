@@ -13,13 +13,21 @@ interface PermissionsMap {
   [username: string]: Role;
 }
 
-export const AVAILABLE_PERMISSIONS = "(user|vips|mods|owner)";
+export const AVAILABLE_PERMISSIONS = `(${Object.values(Role)
+  .filter((value): value is string => typeof value === "string")
+  .map((value) => value.toLowerCase())
+  .join("|")})`;
 const LABEL = "permissions";
 const LOAD_TIMEOUT = 15 * 60 * 1000; // 15 minutes
 
 export function getRoleFromStr(role: string): Role {
   switch (role.toLowerCase()) {
+    case "owner":
+    case "owners":
+      return Role.Owner;
+    case "mod":
     case "mods":
+    case "moderator":
     case "moderators":
       return Role.Moderator;
     case "vip":
