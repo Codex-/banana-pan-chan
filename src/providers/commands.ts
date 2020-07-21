@@ -4,6 +4,7 @@ import {
   setAddDelegate,
   setDeleteDelegate,
 } from "../db/commands";
+import { permissions, Role } from "../services/permissions";
 import { importCogs } from "../utilities/cogs";
 import logger from "../utilities/logger";
 
@@ -30,9 +31,13 @@ export function getArgs(msg: string): string[] {
 /**
  * Provides the decorator for registering bot commands.
  *
+ * @param permissionLevel the minimum role required to use a command.
  * @param handles a list of commands to be handled by the decorated method.
  */
-export function registerCmd(...handles: string[]): MethodDecorator {
+export function registerCmd(
+  permissionLevel: Role,
+  ...handles: string[]
+): MethodDecorator {
   return (target: { [index: string]: any }, propertyKey: string | symbol) => {
     if (typeof propertyKey === "symbol") {
       return;
@@ -50,10 +55,21 @@ export function registerCmd(...handles: string[]): MethodDecorator {
        * @param message
        */
       const wrappedCmd = async (username: string, message: string) => {
+        const cmdLabel = `${LABEL}.${newHandle}`;
         try {
+          const permitted = await permissions.isUserPermitted(
+            permissionLevel,
+            username
+          );
+
+          if (!permitted) {
+            logger.warn(cmdLabel, `${username}: Permission denied.`);
+            return;
+          }
+
           await target[propertyKey](username, message);
         } catch (error) {
-          error.label = `${LABEL}.${newHandle}`;
+          error.label = cmdLabel;
           throw error;
         }
       };
@@ -83,9 +99,6 @@ export function loadFromDb(): void {
     COMMAND_TABLE[cmd.command] = () => client.say(cmd.body);
   }
   logger.info(LABEL, `Loaded ${cmds.length} commands from the database.`);
-
-  // tslint:disable-next-line: no-console
-  console.log(COMMAND_TABLE);
 }
 
 export async function executeCommand(

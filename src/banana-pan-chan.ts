@@ -3,8 +3,9 @@ const tmi = require("tmi.js");
 
 import CONFIG from "./config";
 import * as db from "./db/provider";
-import { executeCommand, loadFromDb } from "./providers/commands";
+import * as commands from "./providers/commands";
 import { executeMatchers } from "./providers/matchers";
+import { permissions } from "./services/permissions";
 import { Client, ConnectionInfo, UserState } from "./types/tmi";
 import logger, { tmiLogger } from "./utilities/logger";
 
@@ -39,6 +40,32 @@ class BananaPanChan {
     }
   }
 
+  public async getMods(): Promise<string[]> {
+    try {
+      return await this.client.mods(CONFIG.Tmi.Channel);
+    } catch (error) {
+      logger.error(
+        LABEL,
+        `.getMods Ch: ${CONFIG.Tmi.Channel} Failed to get moderators."
+        }`
+      );
+    }
+    return [];
+  }
+
+  public async getVIPs(): Promise<string[]> {
+    try {
+      return await this.client.vips(CONFIG.Tmi.Channel);
+    } catch (error) {
+      logger.error(
+        LABEL,
+        `.getVIPs Ch: ${CONFIG.Tmi.Channel} Failed to get VIPs."
+        }`
+      );
+    }
+    return [];
+  }
+
   private createClient(): Client {
     return new tmi.client({
       clientId: "BananaPan",
@@ -55,7 +82,7 @@ class BananaPanChan {
     });
   }
 
-  private bindMessageHandler() {
+  private bindMessageHandler(): void {
     this.client.on(
       "message",
       async (
@@ -80,7 +107,7 @@ class BananaPanChan {
             .split(/\s+/g)[0];
 
           // tslint:disable-next-line: no-floating-promises
-          executeCommand(username, command, message);
+          commands.executeCommand(username, command, message);
         } else {
           // tslint:disable-next-line: no-floating-promises
           executeMatchers(username, message);
@@ -89,8 +116,8 @@ class BananaPanChan {
     );
   }
 
-  private loadDbData() {
-    loadFromDb();
+  private loadDbData(): void {
+    commands.loadFromDb();
   }
 }
 
@@ -99,4 +126,5 @@ export const client = new BananaPanChan();
 // tslint:disable-next-line: no-floating-promises
 (async () => {
   await client.connect();
+  await permissions.loadUserPermissions();
 })();

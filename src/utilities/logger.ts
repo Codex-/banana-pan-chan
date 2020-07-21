@@ -4,6 +4,7 @@ import {
   Logger as WinstonLogger,
   transports,
 } from "winston";
+
 import CONFIG from "../config";
 
 const STD_LEVELS = {
@@ -31,42 +32,44 @@ class Logger {
     });
   }
 
-  public info(label: string, message: string) {
+  public info(label: string, message: string): void {
     this.internalLogger.info(message, {
       label: label,
     });
   }
 
-  public warn(label: string, message: string) {
+  public warn(label: string, message: string): void {
     this.internalLogger.warn(message, {
       label: label,
     });
   }
 
-  public error(label: string, message: string) {
+  public error(label: string, message: string): void {
     this.internalLogger.error(message, {
       label: label,
     });
   }
 
-  public verbose(label: string, message: string) {
+  public verbose(label: string, message: string): void {
     this.internalLogger.verbose(message, {
       label: label,
     });
   }
 
-  public debug(label: string, message: string) {
+  public debug(label: string, message: string): void {
     this.internalLogger.debug(message, {
       label: label,
     });
   }
 
-  public silly(label: string, message: string) {
+  public silly(label: string, message: string): void {
     this.internalLogger.silly(message, {
       label: label,
     });
   }
 
+  // Winston does not export the Format type from Logform.
+  // tslint:disable-next-line: typedef
   private generateFormatter() {
     return format.printf((log) => {
       return (

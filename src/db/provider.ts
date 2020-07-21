@@ -2,8 +2,8 @@ import Database from "better-sqlite3";
 import { readFileSync } from "fs";
 
 import logger from "../utilities/logger";
-import { checkAndUpgradeTables, SCHEMA_VERSION } from "./upgrader";
 import { setDbSchemaVersion } from "./bot";
+import { checkAndUpgradeTables, SCHEMA_VERSION } from "./upgrader";
 
 const LABEL = "db-provider";
 
@@ -15,7 +15,7 @@ export const db = getDbInstance();
 /**
  * Attempt to create database instance.
  */
-function getDbInstance() {
+function getDbInstance(): Database.Database {
   const newDb = new Database(`./sql/${dbName}`);
   logger.info(LABEL, `Successfully connected to ${dbName}`);
   return newDb;
