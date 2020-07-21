@@ -48,33 +48,45 @@ export function registerCmd(
         throw new Error(`Handle ${handle} already exists.`);
       }
 
-      /**
-       * Wrap the command to capture errors for more comprehensive logging.
-       *
-       * @param username
-       * @param message
-       */
-      const wrappedCmd = async (username: string, message: string) => {
-        const cmdLabel = `${LABEL}.${newHandle}`;
-        try {
-          const permitted = await permissions.isUserPermitted(
-            permissionLevel,
-            username
-          );
-
-          if (!permitted) {
-            logger.warn(cmdLabel, `${username}: Permission denied.`);
-            return;
-          }
-
-          await target[propertyKey](username, message);
-        } catch (error) {
-          error.label = cmdLabel;
-          throw error;
-        }
-      };
-
+      const wrappedCmd = generateWrappedCmd(
+        newHandle,
+        permissionLevel,
+        target[propertyKey] as Command
+      );
       COMMAND_TABLE[newHandle] = wrappedCmd;
+    }
+  };
+}
+
+/**
+ * Wrap the command to capture errors for more comprehensive logging.
+ *
+ * @param handle for logging purposes.
+ * @param permissionLevel minimum permission level required to use the command.
+ * @param cmd the raw command function.
+ */
+function generateWrappedCmd(
+  handle: string,
+  permissionLevel: Role,
+  cmd: Command
+): Command {
+  return async (username: string, message: string) => {
+    const cmdLabel = `${LABEL}.${handle}`;
+    try {
+      const permitted = await permissions.isUserPermitted(
+        permissionLevel,
+        username
+      );
+
+      if (!permitted) {
+        logger.warn(cmdLabel, `${username}: Permission denied.`);
+        return;
+      }
+
+      await cmd(username, message);
+    } catch (error) {
+      error.label = cmdLabel;
+      throw error;
     }
   };
 }
@@ -96,7 +108,9 @@ setDeleteDelegate(deleteCmd);
 export function loadFromDb(): void {
   const cmds = getAllCommands();
   for (const cmd of cmds) {
-    COMMAND_TABLE[cmd.command] = () => client.say(cmd.body);
+    const basicCmd = () => client.say(cmd.body);
+    const wrappedCmd = generateWrappedCmd(cmd.command, cmd.role, basicCmd);
+    COMMAND_TABLE[cmd.command] = wrappedCmd;
   }
   logger.info(LABEL, `Loaded ${cmds.length} commands from the database.`);
 }
