@@ -15,7 +15,7 @@ class BananaPanChan {
   private commandChar = CONFIG.Tmi.CommandCharacter;
 
   constructor() {
-    db.validateTables();
+    db.validateOrCreateTables();
     this.loadDbData();
 
     this.client = this.createClient();
