@@ -1,5 +1,5 @@
 import { client } from "../../banana-pan-chan";
-import { registerMatcher } from "../../matchers";
+import { registerMatcher } from "../../providers/matchers";
 
 class Ayy {
   @registerMatcher(/\bayy+$/i)

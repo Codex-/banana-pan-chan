@@ -1,10 +1,10 @@
 // tslint:disable-next-line: no-var-requires
 const tmi = require("tmi.js");
 
-import { executeCommand, loadFromDb } from "./commands";
 import CONFIG from "./config";
 import * as db from "./db/provider";
-import { executeMatchers } from "./matchers";
+import { executeCommand, loadFromDb } from "./providers/commands";
+import { executeMatchers } from "./providers/matchers";
 import { Client, ConnectionInfo, UserState } from "./types/tmi";
 import logger, { tmiLogger } from "./utilities/logger";
 

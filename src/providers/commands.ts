@@ -1,11 +1,11 @@
-import { client } from "./banana-pan-chan";
+import { client } from "../banana-pan-chan";
 import {
   getAllCommands,
   setAddDelegate,
   setDeleteDelegate,
-} from "./db/commands";
-import { importCogs } from "./utilities/cogs";
-import logger from "./utilities/logger";
+} from "../db/commands";
+import { importCogs } from "../utilities/cogs";
+import logger from "../utilities/logger";
 
 type Command = (user: string, message: string) => Promise<void>;
 interface CommandStore {
@@ -46,6 +46,7 @@ export function registerCmd(...handles: string[]): MethodDecorator {
       /**
        * Wrap the command to capture errors for more comprehensive logging.
        *
+       * @param username
        * @param message
        */
       const wrappedCmd = async (username: string, message: string) => {

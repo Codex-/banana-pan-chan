@@ -1,5 +1,5 @@
-import { importCogs } from "./utilities/cogs";
-import logger from "./utilities/logger";
+import { importCogs } from "../utilities/cogs";
+import logger from "../utilities/logger";
 
 type MatcherMethod = (username: string, message: string) => Promise<void>;
 interface MatcherEntry {

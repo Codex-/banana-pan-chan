@@ -1,7 +1,7 @@
 import { client } from "../../banana-pan-chan";
-import { getArgs, registerCmd } from "../../commands";
 import config from "../../config";
 import { addCommand, deleteCommand } from "../../db/commands";
+import { getArgs, registerCmd } from "../../providers/commands";
 
 const CMD_CHAR = config.Tmi.CommandCharacter;
 
