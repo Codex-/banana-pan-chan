@@ -9,6 +9,7 @@ const TABLE = "Commands";
 
 interface CmdRow {
   command: string;
+  role: Role;
   body: string;
 }
 
