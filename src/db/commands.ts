@@ -49,7 +49,7 @@ export function addCommand(cmd: string, role: Role, body: string): void {
 
   logger.verbose(
     LABEL,
-    `Inserted command: ${cmd}, role: ${role}, body: ${body}`
+    `Inserted command: ${cmd}, role: ${Role[role]}, body: ${body}`
   );
   addDelegate(cmd, body);
 }
