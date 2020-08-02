@@ -10,7 +10,7 @@ export enum Role {
 }
 
 interface PermissionsMap {
-  [username: string]: Role;
+  [username: string]: Role | undefined;
 }
 
 export const AVAILABLE_PERMISSIONS = `(${Object.values(Role)
@@ -46,7 +46,7 @@ class PermissionsService {
     requiredRole: Role,
     user: string
   ): Promise<boolean> {
-    const userRole = this.permissionsMap[user];
+    const userRole = this.permissionsMap[user] || Role.User;
     const permitted = userRole >= requiredRole;
 
     // Reload permissions in case of changes.
