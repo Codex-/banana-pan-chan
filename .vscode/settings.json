@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
+        "Logform",
         "chan",
         "cmds",
+        "lmao",
         "printf",
+        "upgrader",
         "userstate"
     ],
     "editor.defaultFormatter": "esbenp.prettier-vscode",

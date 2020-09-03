@@ -1,13 +1,15 @@
+import { Role } from "../services/permissions";
 import logger from "../utilities/logger";
 import { db } from "./provider";
 
 const LABEL = "db-cmd";
 
-const COLUMNS = "command, body";
+const COLUMNS = "command, role, body";
 const TABLE = "Commands";
 
 interface CmdRow {
   command: string;
+  role: Role;
   body: string;
 }
 
@@ -37,15 +39,18 @@ export function getAllCommands(): CmdRow[] {
   return statement.all();
 }
 
-export function addCommand(cmd: string, body: string): void {
-  const sql = `INSERT INTO ${TABLE} (${COLUMNS}) VALUES (@command, @body);`;
+export function addCommand(cmd: string, role: Role, body: string): void {
+  const sql = `INSERT INTO ${TABLE} (${COLUMNS}) VALUES (@command, @role, @body);`;
   const statement = db.prepare(sql);
   const tx = db.transaction(() => {
-    statement.run({ command: cmd, body: body });
+    statement.run({ command: cmd, role: role, body: body });
   });
   tx();
 
-  logger.verbose(LABEL, `Inserted command: ${cmd}, body: ${body}`);
+  logger.verbose(
+    LABEL,
+    `Inserted command: ${cmd}, role: ${Role[role]}, body: ${body}`
+  );
   addDelegate(cmd, body);
 }
 

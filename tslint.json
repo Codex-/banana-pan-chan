@@ -53,6 +53,11 @@
     "promise-function-async": true,
     "strict-type-predicates": true,
     "switch-default": true,
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter"
+    ],
     "variable-name": {
       "options": [
         "allow-leading-underscore",

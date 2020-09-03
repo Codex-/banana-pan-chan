@@ -2,25 +2,31 @@ import { client } from "../../banana-pan-chan";
 import config from "../../config";
 import { addCommand, deleteCommand } from "../../db/commands";
 import { getArgs, registerCmd } from "../../providers/commands";
+import {
+  AVAILABLE_PERMISSIONS,
+  getRoleFromStr,
+  Role,
+} from "../../services/permissions";
 
 const CMD_CHAR = config.Tmi.CommandCharacter;
 
 class Cmd {
-  @registerCmd("cmd-add")
+  @registerCmd(Role.Moderator, "cmd-add")
   public static async add(user: string, message: string): Promise<void> {
     const args = getArgs(message);
-    if (args.length < 2) {
+    if (args.length < 3) {
       await client.say(
-        `@${user} not enough arguments supplied, "!cmd-add cmd text"`
+        `@${user} not enough arguments supplied, "!cmd-add cmd ${AVAILABLE_PERMISSIONS} text"`
       );
       return;
     }
 
     const cmd = args[0];
-    const body = args.slice(1).join(" ");
+    const permission = getRoleFromStr(args[1]);
+    const body = args.slice(2).join(" ");
 
     try {
-      addCommand(cmd, body);
+      addCommand(cmd, permission, body);
       await client.say(`@${user} successfully added ${CMD_CHAR}${cmd}`);
     } catch (error) {
       const msg: string = error.message;
@@ -34,7 +40,7 @@ class Cmd {
     }
   }
 
-  @registerCmd("cmd-remove")
+  @registerCmd(Role.Moderator, "cmd-remove")
   public static async remove(user: string, message: string): Promise<void> {
     const args = getArgs(message);
     if (args.length < 1) {

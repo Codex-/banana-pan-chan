@@ -4,6 +4,7 @@ import {
   setAddDelegate,
   setDeleteDelegate,
 } from "../db/commands";
+import { permissions, Role } from "../services/permissions";
 import { importCogs } from "../utilities/cogs";
 import logger from "../utilities/logger";
 
@@ -30,9 +31,13 @@ export function getArgs(msg: string): string[] {
 /**
  * Provides the decorator for registering bot commands.
  *
+ * @param permissionLevel the minimum role required to use a command.
  * @param handles a list of commands to be handled by the decorated method.
  */
-export function registerCmd(...handles: string[]): MethodDecorator {
+export function registerCmd(
+  permissionLevel: Role,
+  ...handles: string[]
+): MethodDecorator {
   return (target: { [index: string]: any }, propertyKey: string | symbol) => {
     if (typeof propertyKey === "symbol") {
       return;
@@ -43,22 +48,45 @@ export function registerCmd(...handles: string[]): MethodDecorator {
         throw new Error(`Handle ${handle} already exists.`);
       }
 
-      /**
-       * Wrap the command to capture errors for more comprehensive logging.
-       *
-       * @param username
-       * @param message
-       */
-      const wrappedCmd = async (username: string, message: string) => {
-        try {
-          await target[propertyKey](username, message);
-        } catch (error) {
-          error.label = `${LABEL}.${newHandle}`;
-          throw error;
-        }
-      };
-
+      const wrappedCmd = generateWrappedCmd(
+        newHandle,
+        permissionLevel,
+        target[propertyKey] as Command
+      );
       COMMAND_TABLE[newHandle] = wrappedCmd;
+    }
+  };
+}
+
+/**
+ * Wrap the command to capture errors for more comprehensive logging.
+ *
+ * @param handle for logging purposes.
+ * @param permissionLevel minimum permission level required to use the command.
+ * @param cmd the raw command function.
+ */
+function generateWrappedCmd(
+  handle: string,
+  permissionLevel: Role,
+  cmd: Command
+): Command {
+  return async (username: string, message: string) => {
+    const cmdLabel = `${LABEL}.${handle}`;
+    try {
+      const permitted = await permissions.isUserPermitted(
+        permissionLevel,
+        username
+      );
+
+      if (!permitted) {
+        logger.warn(cmdLabel, `${username}: Permission denied.`);
+        return;
+      }
+
+      await cmd(username, message);
+    } catch (error) {
+      error.label = cmdLabel;
+      throw error;
     }
   };
 }
@@ -80,12 +108,11 @@ setDeleteDelegate(deleteCmd);
 export function loadFromDb(): void {
   const cmds = getAllCommands();
   for (const cmd of cmds) {
-    COMMAND_TABLE[cmd.command] = () => client.say(cmd.body);
+    const basicCmd = () => client.say(cmd.body);
+    const wrappedCmd = generateWrappedCmd(cmd.command, cmd.role, basicCmd);
+    COMMAND_TABLE[cmd.command] = wrappedCmd;
   }
   logger.info(LABEL, `Loaded ${cmds.length} commands from the database.`);
-
-  // tslint:disable-next-line: no-console
-  console.log(COMMAND_TABLE);
 }
 
 export async function executeCommand(

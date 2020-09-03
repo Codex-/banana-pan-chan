@@ -2,6 +2,8 @@ import Database from "better-sqlite3";
 import { readFileSync } from "fs";
 
 import logger from "../utilities/logger";
+import { setDbSchemaVersion } from "./bot";
+import { checkAndUpgradeTables, SCHEMA_VERSION } from "./upgrader";
 
 const LABEL = "db-provider";
 
@@ -13,7 +15,7 @@ export const db = getDbInstance();
 /**
  * Attempt to create database instance.
  */
-function getDbInstance() {
+function getDbInstance(): Database.Database {
   const newDb = new Database(`./sql/${dbName}`);
   logger.info(LABEL, `Successfully connected to ${dbName}`);
   return newDb;
@@ -29,6 +31,7 @@ function createTables(schemaSql: string[]): void {
     const transaction = db.transaction(() => createTable.run());
     transaction();
   }
+  setDbSchemaVersion(SCHEMA_VERSION);
 
   logger.debug(LABEL, `Tables created ${schemaSql.length} successfully`);
 }
@@ -48,8 +51,10 @@ function loadSchemaFile(): string[] {
 
 /**
  * Check if tables have previously been created.
+ *
+ * Create tables if they do not exist.
  */
-export function validateTables(): void {
+export function validateOrCreateTables(): void {
   const sql = `SELECT count(*) FROM sqlite_master WHERE type = 'table'`;
   const tables: number = db.prepare(sql).get()["count(*)"];
 
@@ -58,4 +63,6 @@ export function validateTables(): void {
     const schemaSql = loadSchemaFile();
     createTables(schemaSql);
   }
+
+  checkAndUpgradeTables();
 }

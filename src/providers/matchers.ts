@@ -1,9 +1,11 @@
+import { permissions, Role } from "../services/permissions";
 import { importCogs } from "../utilities/cogs";
 import logger from "../utilities/logger";
 
 type MatcherMethod = (username: string, message: string) => Promise<void>;
 interface MatcherEntry {
   regex: RegExp;
+  name: string;
   method: MatcherMethod;
 }
 
@@ -16,7 +18,11 @@ const MATCHER_ARRAY: MatcherEntry[] = [];
  *
  * @param regex the regular expression to test messages with.
  */
-export function registerMatcher(regex: RegExp): MethodDecorator {
+export function registerMatcher(
+  permissionLevel: Role,
+  matcherName: string,
+  regex: RegExp
+): MethodDecorator {
   return (target: { [index: string]: any }, propertyKey: string | symbol) => {
     if (typeof propertyKey === "symbol") {
       return;
@@ -31,16 +37,28 @@ export function registerMatcher(regex: RegExp): MethodDecorator {
       username: string,
       message: string
     ) => {
+      const matcherLabel = `${LABEL}.${regex}`;
       try {
+        const permitted = await permissions.isUserPermitted(
+          permissionLevel,
+          username
+        );
+
+        if (!permitted) {
+          logger.warn(matcherLabel, `${username}: Permission denied.`);
+          return;
+        }
+
         await target[propertyKey](username, message);
       } catch (error) {
-        error.label = `${LABEL}.${regex}`;
+        error.label = matcherLabel;
         throw error;
       }
     };
 
     MATCHER_ARRAY.push({
       regex,
+      name: matcherName,
       method: wrappedMatcher,
     });
   };
